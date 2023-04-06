@@ -4,18 +4,15 @@ Copyright © 2023 Chandler <chandler@chand1012.dev>
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"os"
-	"sync"
 
 	"github.com/charmbracelet/log"
-	googlesearch "github.com/rocketlaunchr/google-search"
 	"github.com/spf13/cobra"
 
 	"github.com/chand1012/arail/pkg/ai"
-	"github.com/chand1012/arail/pkg/pages"
-	"github.com/chand1012/arail/pkg/utils"
+	"github.com/chand1012/arail/pkg/db"
+	"github.com/chand1012/arail/pkg/research"
 )
 
 var (
@@ -36,6 +33,11 @@ Search queries are recommended to be in quotes to avoid errors.
 	Aliases: []string{"r"},
 	Run: func(cmd *cobra.Command, args []string) {
 		query := args[0]
+		database, err := db.New()
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
 
 		if outFile != "" {
 			// check if file exists.
@@ -56,56 +58,11 @@ Search queries are recommended to be in quotes to avoid errors.
 			}
 		}
 
-		results, err := googlesearch.Search(context.TODO(), query)
+		texts, err := research.Research(query, database)
+
 		if err != nil {
 			log.Error(err)
 			os.Exit(1)
-		}
-
-		// get all urls. Make sure there are no duplicates
-		var urls []string
-		for _, result := range results {
-			if !utils.Contains(urls, result.URL) {
-				urls = append(urls, result.URL)
-			}
-		}
-
-		var wg sync.WaitGroup
-
-		content := make(chan string, len(urls))
-
-		for i, url := range urls {
-			wg.Add(1)
-			go func(url string, i int) {
-				defer wg.Done()
-				log.Info("Getting page data for " + url + "on thread " + fmt.Sprint(i) + "...")
-				resp, err := pages.ExtractPageData(url)
-				if err != nil {
-					log.Error(err)
-					content <- ""
-					return
-				}
-				log.Info("Summarizing page data for " + url + "on thread " + fmt.Sprint(i) + "...")
-				resp, err = ai.SummarizeSite(resp, query)
-				if err != nil {
-					log.Error(err)
-					content <- ""
-					return
-				}
-				content <- resp
-				log.Info("Finished with " + url + "...")
-			}(url, i)
-		}
-
-		log.Info("Waiting for site summaries to finish...")
-		wg.Wait()
-		// log.Info("Closing channel...")
-		close(content)
-
-		// log.Info("Extracting content from channel...")
-		var texts []string
-		for t := range content {
-			texts = append(texts, t)
 		}
 
 		log.Info("Summarizing final notes...")
