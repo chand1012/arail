@@ -19,9 +19,8 @@ import (
 var askCmd = &cobra.Command{
 	Use:   "ask",
 	Short: "Ask a question about a topic and get an answer",
-	Long: `
-	
-`,
+	Long: `Ask a question about a topic, and arail will search for relevant information and return an answer.
+Example: arail ask "What is the capital of France?"`,
 	Aliases: []string{"a"},
 	Run: func(cmd *cobra.Command, args []string) {
 		q := args[0]

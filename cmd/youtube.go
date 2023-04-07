@@ -23,7 +23,9 @@ var youtubeCmd = &cobra.Command{
 	Use:   "youtube",
 	Short: "Summarize a YouTube video",
 	Long: `Uses YouTube transcripts and OpenAI to summarize a YouTube video.
-Takes a YouTube URL as a parameter.`,
+Takes a YouTube URL as a parameter.
+Example: arail youtube https://www.youtube.com/watch?v=dQw4w9WgXcQ
+`,
 	Aliases: []string{"yt"},
 	Run: func(cmd *cobra.Command, args []string) {
 		url := args[0]
