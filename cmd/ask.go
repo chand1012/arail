@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 Chandler <chandler@chand1012.dev>
 */
 package cmd
 
@@ -15,22 +15,13 @@ import (
 	"github.com/chand1012/arail/pkg/research"
 )
 
-// add code to create and search text from sites
-// all text from all sites gets added and then searched
-// this way we can ask questions about the topic and get answers
-
-// this is broken. See pkg/db/db.go
-
 // askCmd represents the ask command
 var askCmd = &cobra.Command{
 	Use:   "ask",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Ask a question about a topic and get an answer",
+	Long: `
+	
+`,
 	Aliases: []string{"a"},
 	Run: func(cmd *cobra.Command, args []string) {
 		q := args[0]

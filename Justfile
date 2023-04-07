@@ -8,7 +8,11 @@ run *params:
 
 build:
   mkdir -p bin
-  go build -o bin/arail main.go
+  go build -v -o bin/arail main.go
 
 test:
   go test ./...
+
+clean:
+  rm -rf bin
+  go clean -cache

@@ -141,6 +141,7 @@ func (d *Database) SearchSummarySlice(qs []string) ([]models.Summary, error) {
 	for _, q := range qs {
 		query = query.Where("LOWER(summary) LIKE ?", "%"+strings.ToLower(q)+"%")
 	}
+	query = query.Order("created_at DESC")
 	err := query.Find(&summaries).Error
 
 	return summaries, err

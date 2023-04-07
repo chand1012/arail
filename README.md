@@ -2,7 +2,7 @@
 
 Arail is an Autonomous Research AI and Intelligent Learning system. To install clone the repo and run `just build` .
 
-## Installation
+## Building
 
 ```sh
 git clone https://github.com/chand1012/arail.git
