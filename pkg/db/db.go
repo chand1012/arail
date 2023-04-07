@@ -3,6 +3,7 @@ package db
 import (
 	"os/user"
 	"path/filepath"
+	"strings"
 
 	"github.com/chand1012/arail/pkg/db/models"
 	"github.com/glebarez/sqlite"
@@ -72,7 +73,7 @@ func (d *Database) PostSite(text models.SiteChunk) error {
 func (d *Database) SearchText(search string) ([]models.SiteChunk, error) {
 	var texts []models.SiteChunk
 
-	err := d.DB.Where("text ILIKE ?", "%"+search+"%").Find(&texts).Error
+	err := d.DB.Where("LOWER(text) LIKE ?", "%"+strings.ToLower(search)+"%").Find(&texts).Error
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +126,7 @@ func (d *Database) GetSummaryByURL(url string) (models.Summary, error) {
 func (d *Database) SearchSummary(q string) ([]models.Summary, error) {
 	var summaries []models.Summary
 
-	err := d.DB.Where("title ILIKE ?", "%"+q+"%").Find(&summaries).Error
+	err := d.DB.Where("LOWER(summary) LIKE ?", "%"+strings.ToLower(q)+"%").Find(&summaries).Error
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (d *Database) SearchSummarySlice(qs []string) ([]models.Summary, error) {
 	var summaries []models.Summary
 	query := d.DB
 	for _, q := range qs {
-		query = query.Or("summary ILIKE ?", "%"+q+"%")
+		query = query.Where("LOWER(summary) LIKE ?", "%"+strings.ToLower(q)+"%")
 	}
 	err := query.Find(&summaries).Error
 
