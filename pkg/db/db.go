@@ -16,7 +16,7 @@ type Database struct {
 
 func New() (*Database, error) {
 	db := &Database{}
-	err := db.ConnectDB()
+	err := db.connect()
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func New() (*Database, error) {
 	return db, nil
 }
 
-func (d *Database) ConnectDB() error {
+func (d *Database) connect() error {
 	currentUser, err := user.Current()
 	if err != nil {
 		return err
