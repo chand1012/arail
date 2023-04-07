@@ -1,6 +1,14 @@
 # Arail
 
-Arail is an Autonomous Research AI and Intelligent Learning system. To install clone the repo and run `just build` .
+Arail is an Autonomous Research AI and Intelligent Learning system. 
+
+## Installation
+
+Requires Go 1.19 or higher.
+
+```sh
+go install github.com/chand1012/arail@latest
+```
 
 ## Building
 
