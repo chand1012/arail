@@ -20,7 +20,7 @@ func New() (*Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.DB.AutoMigrate(&models.SiteChunk{}, &models.Video{}, &models.Summary{})
+	err = db.DB.AutoMigrate(&models.SiteChunk{}, &models.Video{}, &models.Summary{}, &models.Chat{})
 	if err != nil {
 		return nil, err
 	}
