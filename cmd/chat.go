@@ -1,27 +1,53 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
+
+	"github.com/chand1012/arail/pkg/chat"
+	"github.com/chand1012/arail/pkg/db"
 )
+
+// Does not work.
 
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Have a chat with Arail",
+	Long:  `Have a chat with Arail.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("chat called")
+		tempDB, err := db.NewTemp()
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+
+		var prompt string
+
+		fmt.Println("Arail> Hello! I'm Arail, your friendly neighborhood AI. What would you like to ask me?")
+		for {
+			fmt.Print("You> ")
+			fmt.Scanln(&prompt)
+
+			if prompt == "/exit" {
+				break
+			}
+
+			response, err := chat.Chat(prompt, tempDB)
+			if err != nil {
+				log.Error(err)
+				os.Exit(1)
+			}
+
+			fmt.Println("Arail>", response)
+		}
+		fmt.Println("Arail> Thanks for chatting with me! Bye!")
 	},
 }
 

@@ -10,7 +10,7 @@ var (
 )
 
 func ParseQuery(query string) ([]string, error) {
-	o, _ := initOpenAI()
+	o, _ := InitOpenAI()
 	resp, err := o.CreateChatSimple(ParseQueryPrompt+"\n"+query, 256)
 	if err != nil {
 		return nil, err

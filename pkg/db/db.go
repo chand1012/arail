@@ -27,6 +27,19 @@ func New() (*Database, error) {
 	return db, nil
 }
 
+func NewTemp() (*Database, error) {
+	db := &Database{}
+	err := db.connectMemory()
+	if err != nil {
+		return nil, err
+	}
+	err = db.DB.AutoMigrate(&models.SiteChunk{}, &models.Video{}, &models.Summary{}, &models.Chat{})
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
 func (d *Database) connect() error {
 	currentUser, err := user.Current()
 	if err != nil {
@@ -47,7 +60,19 @@ func (d *Database) connect() error {
 	return nil
 }
 
-func (d *Database) CloseDB() error {
+func (d *Database) connectMemory() error {
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+
+	d.DB = db
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Database) Close() error {
 	db, err := d.DB.DB()
 	if err != nil {
 		return err
@@ -149,6 +174,38 @@ func (d *Database) SearchSummarySlice(qs []string) ([]models.Summary, error) {
 
 func (d *Database) PostSummary(summary models.Summary) error {
 	err := d.DB.Create(&summary).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// get the latest n chats with offset
+func (d *Database) GetChats(n, offset int) ([]models.Chat, error) {
+	var chats []models.Chat
+
+	err := d.DB.Order("created_at DESC").Limit(n).Offset(offset).Find(&chats).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return chats, nil
+}
+
+func (d *Database) GetChat(offset int) (models.Chat, error) {
+	var chat models.Chat
+
+	err := d.DB.Order("created_at DESC").Offset(offset).First(&chat).Error
+	if err != nil {
+		return models.Chat{}, err
+	}
+
+	return chat, nil
+}
+
+func (d *Database) PostChat(chat models.Chat) error {
+	err := d.DB.Create(&chat).Error
 	if err != nil {
 		return err
 	}

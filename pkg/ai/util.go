@@ -10,7 +10,7 @@ import (
 	"github.com/chand1012/arail/pkg/config"
 )
 
-func initOpenAI() (openai.OpenAI, string) {
+func InitOpenAI() (openai.OpenAI, string) {
 
 	var key string
 	conf, err := config.Load()
@@ -40,7 +40,7 @@ func initOpenAI() (openai.OpenAI, string) {
 }
 
 func req(sysPrompt, userPrompt string) (string, error) {
-	o, model := initOpenAI()
+	o, model := InitOpenAI()
 	messages := []aiTypes.ChatMessage{
 		{Role: "system", Content: sysPrompt},
 		{Role: "user", Content: userPrompt},
@@ -65,7 +65,7 @@ func req(sysPrompt, userPrompt string) (string, error) {
 }
 
 func reqModelOverride(sysPrompt, userPrompt, model string) (string, error) {
-	o, _ := initOpenAI()
+	o, _ := InitOpenAI()
 	messages := []aiTypes.ChatMessage{
 		{Role: "system", Content: sysPrompt},
 		{Role: "user", Content: userPrompt},
